@@ -305,27 +305,28 @@ Keep responses clear, accurate, and easy for non-medical users to understand."""
             answer = response.choices[0].message.content
             loading_slot.empty()
 
-            # Convert Markdown to HTML
-            import markdown
-            answer_html = markdown.markdown(answer)
-
-            # Render combined header + answer box
-            st.markdown(f"""
-            <div class='answer-box' style='margin-bottom: 1.5rem;'>
-                <div style='display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.8rem; border-bottom: 1px solid #E2E8F0; padding-bottom: 0.8rem;'>
-                    <div style='width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #0D9488, #5EEAD4); display: flex; align-items: center; justify-content: center;'>
-                        <i class="fa-solid fa-robot" style="color: white; font-size: 1rem;"></i>
+            st.markdown("""
+            <div class='answer-box' style='margin-bottom: 0.5rem;'>
+                <div style='display: flex; align-items: center; gap: 0.6rem;
+                            padding-bottom: 0.8rem; border-bottom: 1px solid #E2E8F0;'>
+                    <div style='width: 38px; height: 38px; border-radius: 10px;
+                                background: linear-gradient(135deg, #0D9488, #5EEAD4);
+                                display: flex; align-items: center; justify-content: center;'>
+                        <i class="fa-solid fa-robot" style="color: white;
+                           font-size: 1rem;"></i>
                     </div>
                     <div>
-                        <div style='font-weight: 700; color: #0F172A; font-size: 0.95rem;'>Health Assistant</div>
-                        <div style='color: #94A3B8; font-size: 0.92rem;'>Powered by Llama 3.1 via Groq</div>
+                        <div style='font-weight: 700; color: #0F172A;
+                                    font-size: 0.95rem;'>Health Assistant</div>
+                        <div style='color: #94A3B8; font-size: 0.92rem;'>
+                            Powered by Llama 3.1 via Groq</div>
                     </div>
-                </div>
-                <div style='line-height: 1.6; color: #334155;'>
-                    {answer_html}
                 </div>
             </div>
             """, unsafe_allow_html=True)
+
+            # Render answer using Streamlit native markdown — no external package needed
+            st.markdown(answer)
 
         except Exception as e:
             loading_slot.empty()
