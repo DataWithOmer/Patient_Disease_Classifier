@@ -66,6 +66,11 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     line-height: 1.6 !important;
     resize: none !important;
 }
+
+[data-testid="stTextArea"] textarea::placeholder {
+    color: #94A3B8 !important; 
+    opacity: 1; }
+
 [data-testid="stTextArea"] textarea:focus {
     border-color: #0D9488 !important;
     box-shadow: 0 0 0 3px rgba(13,148,136,0.1) !important;
@@ -236,7 +241,7 @@ question = st.text_area(
     "Your Question",
     placeholder="e.g. What are the early symptoms of diabetes? "
                 "Is it safe to take ibuprofen with high blood pressure?",
-    height=130
+    height=130, color: #94A3B8
 )
 ask_btn = st.button("  Ask Health Assistant", use_container_width=True)
 
