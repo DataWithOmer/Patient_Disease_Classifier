@@ -263,6 +263,7 @@ if ask_btn:
             </div>
         </div>
         """, unsafe_allow_html=True)
+        st.markdown(answer, unsafe_allow_html=False)
 
         try:
             client = Groq(api_key=api_key)
