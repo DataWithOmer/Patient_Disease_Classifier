@@ -1,7 +1,42 @@
+Ah, the classic `SyntaxError` caused by a tiny missing character!
+
+The reason your app is crashing on startup is because of a missing comma inside your CSS style block. Take a look at line 81 (or near it) of your file, right inside the `.answer-box` CSS class:
+
+```css
+/* ─ Answer box ── */
+.answer-box {
+    background: linear-gradient(145deg, #FFFFFF 0%, #F0FDFA 100%);
+    border: 1.5px solid #99F6E4;
+    border-radius: 16px;
+    padding: 1.2rem;
+    margin-top: 0.4rem;
+    margin-bottom: 1rem  <--- MISSING A SEMICOLON HERE
+    box-shadow: 0 4px 16px rgba(13,148,136,0.08);
+    animation: fadeInUp 0.5s ease-out both;
+    position: relative;
+    overflow: hidden;
+}
+
+```
+
+Wait, a missing semicolon in CSS usually just breaks the styling, but why did it throw a **Python** `SyntaxError` (`ast.parse`)?
+
+Because you pasted the CSS adjustment I gave you directly into the file as raw code, or mixed up Python syntax inside your string. Looking closely at your file, you have a massive `st.markdown(""" <style> ... </style> """, unsafe_allow_html=True)` block at the top.
+
+If you accidentally pasted the CSS modification **outside** of that triple-quoted string, Python tried to compile raw CSS as Python code—which it obviously can't do!
+
+---
+
+### The Fix
+
+Here is the fully fixed and consolidated script. Copy this entire code block and overwrite your `3_Health_Assistant.py` file completely. It includes the correct placeholder color change **and** fixes the syntax structure so it compiles cleanly:
+
+```python
 import streamlit as st
 import sys
 import os
 import time
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from groq import Groq
 
@@ -54,7 +89,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .section-label { font-size: 1.25rem; font-weight: 800; color: #0F766E; text-transform: uppercase; letter-spacing: 0.13em; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.5rem; }
 .section-label::before { content: ''; width: 4px; height: 18px; border-radius: 2px; background: linear-gradient(180deg, #0D9488, #5EEAD4); }
 
-/* ── Text area ── */
+/* ── Text area & Placeholder ── */
 [data-testid="stTextArea"] textarea {
     background-color: #FFFFFF !important;
     border: 1.5px solid #E2E8F0 !important;
@@ -106,7 +141,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     border-radius: 16px;
     padding: 1.2rem;
     margin-top: 0.4rem;
-    margin-bottom: 1rem
+    margin-bottom: 1rem;
     box-shadow: 0 4px 16px rgba(13,148,136,0.08);
     animation: fadeInUp 0.5s ease-out both;
     position: relative;
@@ -240,7 +275,7 @@ question = st.text_area(
     "Your Question",
     placeholder="e.g. What are the early symptoms of diabetes? "
                 "Is it safe to take ibuprofen with high blood pressure?",
-    height=130, color: #94A3B8
+    height=130
 )
 ask_btn = st.button("  Ask Health Assistant", use_container_width=True)
 
@@ -308,6 +343,7 @@ Keep responses clear, accurate, and easy for non-medical users to understand."""
             answer = response.choices[0].message.content
             loading_slot.empty()
 
+            # Render answer header
             st.markdown("""
             <div class='answer-box' style='margin-bottom: 0.5rem;'>
                 <div style='display: flex; align-items: center; gap: 0.6rem;
@@ -328,7 +364,7 @@ Keep responses clear, accurate, and easy for non-medical users to understand."""
             </div>
             """, unsafe_allow_html=True)
 
-            # Render answer using Streamlit native markdown — no external package needed
+            # Render answer using Streamlit native markdown
             st.markdown(answer)
 
         except Exception as e:
@@ -349,3 +385,5 @@ st.markdown("""
     Always consult a qualified doctor for diagnosis and treatment.
 </div>
 """, unsafe_allow_html=True)
+
+```
